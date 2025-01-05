@@ -1,0 +1,38 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int binarySearch(const vector<int>& arr, int target) {
+    int left = 0, right = arr.size() - 1;
+
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+
+        if (arr[mid] == target)
+            return mid; // Elemen ditemukan
+        else if (arr[mid] < target)
+            left = mid + 1; // Cari di bagian kanan
+        else
+            right = mid - 1; // Cari di bagian kiri
+    }
+
+    return -1; // Elemen tidak ditemukan
+}
+
+int main() {
+	
+	cout << "Nama: Dimas Anggoro" <<endl;
+	cout << "NIM : 241011402166" <<endl;
+	cout << "---------------------" <<endl;
+	
+    vector<int> datasetA = {2, 4, 7, 10, 23, 45, 67, 89};
+    int target = 23;
+
+    int result = binarySearch(datasetA, target);
+    if (result != -1)
+        cout << "Elemen " << target << " ditemukan pada indeks " << result << endl;
+    else
+        cout << "Elemen " << target << " tidak ditemukan" << endl;
+
+    return 0;
+}
