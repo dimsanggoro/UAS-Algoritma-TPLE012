@@ -1,0 +1,115 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <ctime>    // Untuk std::time dan std::ctime
+
+// Struktur untuk menyimpan data pesanan
+struct Order {
+    int orderID;
+    std::string pickupLocation;
+    std::string destination;
+    std::time_t orderTime; // Waktu pemesanan dalam format time_t
+
+    // Fungsi untuk menampilkan informasi pesanan
+    void display() const {
+        std::cout << "Order ID: " << orderID
+                  << ", Pickup: " << pickupLocation
+                  << ", Destination: " << destination
+                  << ", Order Time: " << std::ctime(&orderTime);
+    }
+};
+
+// Fungsi untuk menggabungkan dua bagian dari array
+void merge(std::vector<Order>& orders, int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    std::vector<Order> leftOrders(n1);
+    std::vector<Order> rightOrders(n2);
+
+    for (int i = 0; i < n1; i++)
+        leftOrders[i] = orders[left + i];
+    for (int j = 0; j < n2; j++)
+        rightOrders[j] = orders[mid + 1 + j];
+
+    int i = 0, j = 0, k = left;
+
+    while (i < n1 && j < n2) {
+        if (leftOrders[i].orderTime <= rightOrders[j].orderTime) {
+            orders[k] = leftOrders[i];
+            i++;
+        } else {
+            orders[k] = rightOrders[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        orders[k] = leftOrders[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        orders[k] = rightOrders[j];
+        j++;
+        k++;
+    }
+}
+
+// Fungsi untuk melakukan Merge Sort
+void mergeSort(std::vector<Order>& orders, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+
+        mergeSort(orders, left, mid);
+        mergeSort(orders, mid + 1, right);
+        merge(orders, left, mid, right);
+    }
+}
+
+// Fungsi untuk mendapatkan input dari pengguna
+void inputOrders(std::vector<Order>& orders, int n) {
+    for (int i = 0; i < n; ++i) {
+        Order order;
+        std::cout << "Masukkan ID Pesanan: ";
+        std::cin >> order.orderID;
+        std::cin.ignore(); // Mengabaikan newline setelah memasukkan ID
+
+        std::cout << "Masukkan Lokasi Pengambilan: ";
+        std::getline(std::cin, order.pickupLocation);
+
+        std::cout << "Masukkan Lokasi Tujuan: ";
+        std::getline(std::cin, order.destination);
+
+        std::cout << "Masukkan Waktu Pemesanan (format UNIX timestamp): ";
+        std::cin >> order.orderTime;
+
+        orders.push_back(order);
+    }
+}
+
+int main() {
+    int n;
+    std::cout << "Masukkan jumlah pesanan yang ingin dimasukkan: ";
+    std::cin >> n;
+
+    std::vector<Order> orders;
+    inputOrders(orders, n);
+
+    std::cout << "\nData Pesanan Sebelum Diurutkan:\n";
+    for (const auto& order : orders) {
+        order.display();
+    }
+
+    // Mengurutkan pesanan berdasarkan waktu pemesanan
+    mergeSort(orders, 0, orders.size() - 1);
+
+    std::cout << "\nData Pesanan Setelah Diurutkan:\n";
+    for (const auto& order : orders) {
+        order.display();
+    }
+
+    return 0;
+}
